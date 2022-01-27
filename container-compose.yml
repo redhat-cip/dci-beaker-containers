@@ -1,0 +1,12 @@
+version: "3"
+services:
+  db:
+    image: rhel8/mariadb-103
+    volumes:
+      - mariadb:/var/lib/mysql/data
+    environment:
+      - MYSQL_DATABASE=${DATABASE_NAME:-beaker}
+      - MYSQL_USER=${DATABASE_USER:-beaker}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD:-password}
+    ports:
+      - "3306:3306"
