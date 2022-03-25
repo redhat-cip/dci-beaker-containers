@@ -4,13 +4,12 @@ services:
     image: registry.redhat.io/rhel8/mariadb-103
     volumes:
       - mariadb:/var/lib/mysql/data
-      - ./db_cfg/my.cnf:/etc/mysql/my.cnf
     environment:
       - MYSQL_DATABASE=${DATABASE_NAME:-beaker}
       - MYSQL_USER=${DATABASE_USER:-beaker}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD:-beaker}
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DEFAULTS_FILE=/etc/mysql/my.cnf
+      - MYSQL_CHARSET=utf8
     ports:
       - "3306:3306"
   beaker_server:

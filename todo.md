@@ -6,7 +6,8 @@ https://beaker-project.org/docs/admin-guide/installation.html
 #### Database:
 - container name: dci-beaker-containers_db_1
 - enable utf8 charset
-	+ mount custom my.cnf file in container and set MYSQL_DEFAULTS_FILE to point to it (DONE)
+	+ mount custom my.cnf file in container and set MYSQL_DEFAULTS_FILE to point to it (UNDONE)
+	+ use MYSQL_CHARSET=utf8 instead (DONE VIA ENV IN CONTAINER)
 - create DB (beaker)
 	+ MYSQL_DATABASE (DONE VIA ENV IN CONTAINER)
 - create user (beaker)
