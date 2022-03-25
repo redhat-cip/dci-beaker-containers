@@ -16,5 +16,5 @@ RUN yum upgrade -y && \
   systemctl enable tftp && \
   systemctl enable beaker-proxy.service && \
   systemctl enable beaker-watchdog.service && \
-  systemctl enable beaker-provision.service && \
+  systemctl enable beaker-provision.service
 CMD [ "/usr/sbin/init" ]
