@@ -14,7 +14,8 @@ RUN yum upgrade -y && \
   yum clean all && \
   systemctl enable xinetd && \
   systemctl enable tftp && \
+  systemctl enable httpd && \
   systemctl enable beaker-proxy.service && \
   systemctl enable beaker-watchdog.service && \
-  systemctl enable beaker-provision.service && \
+  systemctl enable beaker-provision.service
 CMD [ "/usr/sbin/init" ]

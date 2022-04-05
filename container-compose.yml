@@ -2,32 +2,46 @@ version: "3"
 services:
   db:
     image: registry.redhat.io/rhel8/mariadb-103
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 60s
+      retries: 10
     volumes:
-      - mariadb:/var/lib/mysql/data
-      - ./db_cfg/my.cnf:/etc/mysql/my.cnf
+      - ./mariadb:/var/lib/mysql/data
     environment:
       - MYSQL_DATABASE=${DATABASE_NAME:-beaker}
       - MYSQL_USER=${DATABASE_USER:-beaker}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD:-beaker}
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DEFAULTS_FILE=/etc/mysql/my.cnf
+      - MYSQL_CHARSET=utf8
     ports:
       - "3306:3306"
+    networks:
+      beaker_container_network:
+        ipv4_address: 172.20.0.10
   beaker_server:
     build: ./beaker_server
-    #DB should be up/configured before beaker_server
-    depends_on: 
+    depends_on:
       - db
+# service healthy not implemented in podman compose yet:
+# https://github.com/containers/podman-compose/pull/453
+#      db:
+#        condition: service_healthy
     volumes:
       - ./beaker_server/beaker_cfg/server.cfg:/etc/beaker/server.cfg
       - ./beaker_server/beaker_cfg/client.conf:/etc/beaker/client.conf
       - /var/www/html:/var/www/html
     ports:
       - "8080:80"
+    networks:
+      beaker_container_network:
+        ipv4_address: 172.20.0.11
   beaker_lab_controller:
     #Start after server to register power scripts with server?
-    depends_on: 
+    depends_on:
       - beaker_server
+#      beaker_server:
+#        condition: service_healthy
     build: ./beaker_lab_controller
     volumes:
       - ./beaker_lab_controller/cfg/labcontroller.conf:/etc/beaker/labcontroller.conf
@@ -35,7 +49,20 @@ services:
       - ./beaker_lab_controller/files/ipmitool_lanplus:/etc/beaker/power-scripts/ipmitool_lanplus
       - ./beaker_lab_controller/files/redfish:/etc/beaker/power-scripts/redfish
       - ./beaker_lab_controller/tftpboot:/var/lib/tftpboot
-#  dnsmasq:
-#TODO
-#    image:
-#    volumes
+    networks:
+      beaker_container_network:
+        ipv4_address: 172.20.0.12
+  dnsmasq:
+    build: ./dnsmasq
+    volumes:
+      - ./dnsmasq/beaker.conf:/etc/dnsmasq.d/beaker.conf
+    networks:
+      beaker_container_network:
+        ipv4_address: 172.20.0.13
+networks:
+  beaker_container_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.20.0.0/16"
+
