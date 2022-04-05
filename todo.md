@@ -13,6 +13,7 @@ https://beaker-project.org/docs/admin-guide/installation.html
 - container name: dci-beaker-containers_db_1
 - enable utf8 charset
 	+ set via env var MYSQL_CHARSET=utf8 (DONE)
+	+ use MYSQL_CHARSET=utf8 instead (DONE VIA ENV IN CONTAINER)
 - create DB (beaker)
 	+ MYSQL_DATABASE (DONE VIA ENV IN CONTAINER)
 - create user (beaker)
