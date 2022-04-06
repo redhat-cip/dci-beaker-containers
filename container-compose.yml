@@ -7,7 +7,7 @@ services:
       timeout: 60s
       retries: 10
     volumes:
-      - ./mariadb:/var/lib/mysql/data
+      - mariadb:/var/lib/mysql/data
     environment:
       - MYSQL_DATABASE=${DATABASE_NAME:-beaker}
       - MYSQL_USER=${DATABASE_USER:-beaker}
@@ -65,4 +65,5 @@ networks:
       driver: default
       config:
         - subnet: "172.20.0.0/16"
-
+volumes:
+  mariadb:
