@@ -8,8 +8,8 @@ RUN yum upgrade -y && \
   yum -y install beaker-server  && \
   yum -y install beaker-client && \
   yum -y install MySQL-python && \
+  yum -y install mariadb && \
   yum -y install httpd && \
-  yum clean all && \
-  systemctl enable httpd.service && \
-  systemctl enable beakerd.service
-CMD [ "/usr/sbin/init" ]
+  yum clean all
+COPY root /
+CMD [ "/usr/bin/init.sh" ]
