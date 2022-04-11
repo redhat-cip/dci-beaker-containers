@@ -26,11 +26,11 @@ https://beaker-project.org/docs/admin-guide/installation.html
 #### Beaker Server (with httpd):
 - container name: dci-beaker-containers_beaker_server_1
 - depends on DB
-	+ TODO: added depends_on with health check for DB (mysqladmin ping).  Health check not implemented in podman-compose yet, but there is a recent PR (https://github.com/containers/podman-compose/pull/453).  Confirmed that after waiting for DB container and then starting beaker server container manually, beakerd service starts fine.
+	+ TODO: added depends_on with health check for DB (mysqladmin ping).  Health check not implemented in podman-compose yet, but there is a recent PR (https://github.com/containers/podman-compose/pull/453).  Confirmed that after waiting for DB container and then starting beaker server container manually, beakerd service starts fine. (DONE)
 - /etc/beaker/server.cfg
 	+ Current solution hardcodes DB location to DB container name and user/pw to beaker/beaker (WORKS)
 - beaker-init -u admin -p testing -e root@localhost.localdomain (NEED TO AUTOMATE THIS COMMAND)
-	+ creates necessary tables in DB
+	+ creates necessary tables in DB (DONE)
 - bkr labcontroller-create --fqdn 172.20.0.12 --user host/labctrl --password labctrl --email root@localhost.localdomain
 	+ registers lab controller container (NEED TO AUTOMATE THIS COMMAND AFTER beaker-init)
 
