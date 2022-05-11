@@ -1,9 +1,9 @@
 # NOTE: Podman/systemd is incompatible with cgroups v2 (F34+).  Revert to v1 if necessary by
 # adding kernel arg systemd.unified_cgroup_hierarchy=0.
 # https://bugzilla.redhat.com/show_bug.cgi?id=1970237
-FROM centos:7
-LABEL name="dnsmasq_container"
+FROM registry.redhat.io/rhel8/httpd-24
+LABEL name="beaker_web_server"
 RUN yum upgrade -y && \
-  yum -y install dnsmasq && \
-  yum clean all && \
-CMD [ "/usr/sbin/dnsmasq -k" ]
+  yum -y install mod_wsgi && \
+  yum clean all
+CMD ["/usr/bin/run-httpd"]

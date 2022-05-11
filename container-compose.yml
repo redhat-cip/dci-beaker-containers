@@ -14,56 +14,51 @@ services:
       - MYSQL_PASSWORD=${DATABASE_PASSWORD:-beaker}
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_CHARSET=utf8
+    network_mode: "host"
+  web:
+    build: ./web
+    depends_on:
+      - beaker_server
+    volumes:
+#      - /var/www:/var/www
+      - ./web/beaker-server.conf:/etc/httpd/conf.d/beaker-server.conf
+      - ./web/beaker-lab-controller.conf:/etc/httpd/conf.d/beaker-lab-controller.conf
+      - beaker_server_usr_share_bkr:/usr/share/bkr
+      - beaker_server_var_cache_beaker:/var/cache/beaker
+      - beaker_server_var_www_beaker:/var/www/beaker
+    user: root
+#    network_mode: "host"
     ports:
-      - "3306:3306"
-    networks:
-      beaker_container_network:
-        ipv4_address: 172.20.0.10
+      - "8080:80"
   beaker_server:
     build: ./beaker_server
     depends_on:
       - db
-# service healthy not implemented in podman compose yet:
-# https://github.com/containers/podman-compose/pull/453
-#      db:
-#        condition: service_healthy
     volumes:
-      - ./beaker_server/beaker_cfg/server.cfg:/etc/beaker/server.cfg
-      - ./beaker_server/beaker_cfg/client.conf:/etc/beaker/client.conf
-      - /var/www/html:/var/www/html
-    ports:
-      - "8080:80"
-    networks:
-      beaker_container_network:
-        ipv4_address: 172.20.0.11
-  beaker_lab_controller:
-    #Start after server to register power scripts with server?
-    depends_on:
-      - beaker_server
-#      beaker_server:
-#        condition: service_healthy
-    build: ./beaker_lab_controller
-    volumes:
-      - ./beaker_lab_controller/cfg/labcontroller.conf:/etc/beaker/labcontroller.conf
-      - ./beaker_lab_controller/cfg/tftp/tftp:/etc/xinetd.d/tftp
-      - ./beaker_lab_controller/files/ipmitool_lanplus:/etc/beaker/power-scripts/ipmitool_lanplus
-      - ./beaker_lab_controller/files/redfish:/etc/beaker/power-scripts/redfish
-      - ./beaker_lab_controller/tftpboot:/var/lib/tftpboot
-    networks:
-      beaker_container_network:
-        ipv4_address: 172.20.0.12
-  dnsmasq:
-    build: ./dnsmasq
-    volumes:
-      - ./dnsmasq/beaker.conf:/etc/dnsmasq.d/beaker.conf
-    networks:
-      beaker_container_network:
-        ipv4_address: 172.20.0.13
-networks:
-  beaker_container_network:
-    ipam:
-      driver: default
-      config:
-        - subnet: "172.20.0.0/16"
+      - ./beaker_server/beaker_cfg/server.cfg:/etc/beaker/server.cfg:Z
+      - ./beaker_server/beaker_cfg/client.conf:/etc/beaker/client.conf:Z
+#      - /var/www:/var/www
+      - beaker_server_usr_share_bkr:/usr/share/bkr
+      - beaker_server_var_cache_beaker:/var/cache/beaker
+      - beaker_server_var_www_beaker:/var/www/beaker
+    network_mode: "host"
+#  beaker_lab_controller:
+#    #Start after server to register power scripts with server?
+#    depends_on:
+#      - beaker_server
+#    build: ./beaker_lab_controller
+#    volumes:
+#      - ./beaker_lab_controller/cfg/labcontroller.conf:/etc/beaker/labcontroller.conf:Z
+#      - ./beaker_lab_controller/cfg/tftp/tftp:/etc/xinetd.d/tftp
+#      - ./beaker_lab_controller/files/ipmitool_lanplus:/etc/beaker/power-scripts/ipmitool_lanplus
+#      - ./beaker_lab_controller/files/redfish:/etc/beaker/power-scripts/redfish
+#      - ./beaker_lab_controller/tftpboot:/var/lib/tftpboot
+#  dnsmasq:
+#    build: ./dnsmasq
+#    volumes:
+#      - ./dnsmasq/beaker.conf:/etc/dnsmasq.d/beaker.conf
 volumes:
   mariadb:
+  beaker_server_usr_share_bkr:
+  beaker_server_var_cache_beaker:
+  beaker_server_var_www_beaker:
