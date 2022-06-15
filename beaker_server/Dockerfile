@@ -1,14 +1,23 @@
-# NOTE: Podman/systemd is incompatible with cgroups v2 (F34+).  Revert to v1 if necessary by
-# adding kernel arg systemd.unified_cgroup_hierarchy=0.
-# https://bugzilla.redhat.com/show_bug.cgi?id=1970237
 FROM centos:7
 LABEL name="beaker_server_container"
 RUN yum upgrade -y && \
-  yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-RedHatEnterpriseLinux.repo && \
+  yum -y install epel-release
+RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
+RUN yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-RedHatEnterpriseLinux.repo && \
   yum -y install beaker-server  && \
   yum -y install beaker-client && \
   yum -y install MySQL-python && \
   yum -y install mariadb && \
+  yum -y install supervisor && \
+  yum -y install httpd && \
+  yum -y install mod_wsgi && \
   yum clean all
-COPY root /
-CMD [ "/usr/bin/init.sh" ]
+COPY config/server.cfg /etc/beaker/server.cfg
+COPY config/client.conf /etc/beaker/client.conf
+COPY config/supervisord.conf /etc/supervisord.conf
+COPY config/beaker-server.conf /etc/httpd/conf.d/beaker-server.conf
+
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["supervisord", "-n"]
