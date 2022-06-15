@@ -2,6 +2,7 @@ FROM centos:7
 LABEL name="beaker_server_container"
 RUN yum upgrade -y && \
   yum -y install epel-release && \
+  yum-config-manager --save --setopt=epel.exclude=nodejs*,npm && \
   yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-RedHatEnterpriseLinux.repo && \
   yum -y install beaker-server  && \
   yum -y install beaker-client && \
