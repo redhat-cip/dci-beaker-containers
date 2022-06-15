@@ -15,15 +15,14 @@ function wait_for_mysql() {
 
 # Initiate the beaker database
 function init_beaker_db() {
-  beaker-init -u admin -p testing -e root@localhost.localdomain 
-  touch /etc/beaker/already_initiate
+  beaker-init -u admin -p admin -e root@localhost.localdomain 
+  touch /tmp/already_initiate
 }
 
 wait_for_mysql
 
-if [ ! -f "/etc/beaker/already_initiate" ]; then
+if [ ! -f "/tmp/already_initiate" ]; then
   init_beaker_db
 fi
 
-su -s /bin/bash apache -c "/usr/bin/beakerd -p /run/beaker/beakerd.pid -f" &
-sleep infinity
+exec "$@"
