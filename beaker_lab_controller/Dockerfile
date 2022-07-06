@@ -3,19 +3,25 @@
 FROM centos:7
 LABEL name="beaker_lab_controller_container"
 RUN yum upgrade -y && \
-  yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-RedHatEnterpriseLinux.repo && \
+  yum -y install epel-release
+RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
+RUN yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-RedHatEnterpriseLinux.repo && \
   yum -y install beaker-lab-controller && \
   yum -y install conserver && \
   yum -y install conserver-client && \
+  yum -y install supervisor && \
   yum -y install tftp-server && \
   yum -y install tftp && \
   yum -y install xinetd && \
   yum -y install httpd && \
-  yum clean all && \
-  systemctl enable xinetd && \
-  systemctl enable tftp && \
-  systemctl enable httpd && \
-  systemctl enable beaker-proxy.service && \
-  systemctl enable beaker-watchdog.service && \
-  systemctl enable beaker-provision.service
-CMD [ "/usr/sbin/init" ]
+  yum clean all
+COPY config/supervisord.conf /etc/supervisord.conf
+COPY config/labcontroller.conf /etc/beaker/labcontroller.conf
+COPY config/tftp/tftp /etc/xinetd.d/tftp
+COPY files/ipmitool_lanplus /etc/beaker/power-scripts/ipmitool_lanplus
+COPY files/redfish /etc/beaker/power-scripts/redfish
+
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["supervisord", "-n"]
