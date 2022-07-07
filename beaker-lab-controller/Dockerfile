@@ -1,7 +1,5 @@
-# NOTE: Podman/systemd is incompatible with cgroups v2 (F34+).  Revert to v1 if necessary by
-# adding kernel arg systemd.unified_cgroup_hierarchy=0
 FROM centos:7
-LABEL name="beaker_lab_controller_container"
+LABEL name="beaker-lab-controller-container"
 RUN yum upgrade -y && \
   yum -y install epel-release
 RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
@@ -13,7 +11,6 @@ RUN yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-R
   yum -y install tftp-server && \
   yum -y install tftp && \
   yum -y install xinetd && \
-  yum -y install httpd && \
   yum clean all
 COPY config/supervisord.conf /etc/supervisord.conf
 COPY config/labcontroller.conf /etc/beaker/labcontroller.conf

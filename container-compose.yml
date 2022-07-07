@@ -14,19 +14,19 @@ services:
       - MYSQL_PASSWORD=${DATABASE_PASSWORD:-beaker}
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_CHARSET=utf8
-  beaker_server:
-    build: ./beaker_server
+  beaker-server:
+    build: ./beaker-server
     depends_on:
       - db
     ports:
       - "8080:80"
-  beaker_lab_controller:
-    build: ./beaker_lab_controller
+  beaker-lab-controller:
+    build: ./beaker-lab-controller
     #Start after server to register power scripts?
     depends_on:
-      - beaker_server
+      - beaker-server
     volumes:
-      - ./beaker_lab_controller/tftpboot:/var/lib/tftpboot
+      - ./beaker-lab-controller/tftpboot:/var/lib/tftpboot
 #  dnsmasq:
 #    build: ./dnsmasq
 #    volumes:

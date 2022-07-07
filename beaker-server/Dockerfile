@@ -1,5 +1,5 @@
 FROM centos:7
-LABEL name="beaker_server_container"
+LABEL name="beaker-server-container"
 RUN yum upgrade -y && \
   yum -y install epel-release
 RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
