@@ -18,6 +18,8 @@ COPY config/tftp/tftp /etc/xinetd.d/tftp
 COPY files/ipmitool_lanplus /etc/beaker/power-scripts/ipmitool_lanplus
 COPY files/redfish /etc/beaker/power-scripts/redfish
 
+EXPOSE 69/udp
+
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 

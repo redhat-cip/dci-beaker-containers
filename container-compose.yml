@@ -22,9 +22,10 @@ services:
       - "8080:80"
   beaker-lab-controller:
     build: ./beaker-lab-controller
-    #Start after server to register power scripts?
     depends_on:
       - beaker-server
+    # ports:
+    #   - "6900:69/udp"
     volumes:
       - ./beaker-lab-controller/tftpboot:/var/lib/tftpboot
 #  dnsmasq:
