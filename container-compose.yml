@@ -24,8 +24,6 @@ services:
     build: ./beaker-lab-controller
     depends_on:
       - beaker-server
-    # ports:
-    #   - "6900:69/udp"
     volumes:
       - ./beaker-lab-controller/tftpboot:/var/lib/tftpboot
 #  dnsmasq:

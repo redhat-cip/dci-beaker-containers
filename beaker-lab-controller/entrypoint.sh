@@ -14,5 +14,13 @@ function wait_for_http_ok() {
 
 # Poll until Beaker server responds to our ping.
 wait_for_http_ok "http://beaker-server/bkr/"
+sleep 10
+
+if [ ! -f "/tmp/lab_controller_registered" ]; then
+  bkr labcontroller-create --fqdn beaker-server \
+      --user host/labctrl --password labctrl \
+      --email labctrl@beaker-server.localdomain \
+      > /tmp/beaker_server_initiated
+fi
 
 exec "$@"
