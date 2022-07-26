@@ -20,7 +20,7 @@ if [ ! -f "/tmp/lab_controller_registered" ]; then
   bkr labcontroller-create --fqdn beaker-server \
       --user host/labctrl --password labctrl \
       --email labctrl@beaker-server.localdomain \
-      > /tmp/beaker_server_initiated
+      > /tmp/lab_controller_registered
 fi
 
 exec "$@"
