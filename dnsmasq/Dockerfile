@@ -4,6 +4,15 @@
 FROM centos:7
 LABEL name="dnsmasq_container"
 RUN yum upgrade -y && \
+  yum -y install epel-release
+RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm && \
   yum -y install dnsmasq && \
-  yum clean all && \
-CMD [ "/usr/sbin/dnsmasq -k" ]
+  yum -y install supervisor && \
+  yum clean all
+
+EXPOSE 53/udp
+EXPOSE 53/tcp
+
+COPY config/supervisord.conf /etc/supervisord.conf
+COPY config/beaker.conf /etc/dnsmasq.d/beaker.conf
+CMD ["supervisord", "-n"]

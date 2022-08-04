@@ -26,9 +26,9 @@ services:
       - beaker-server
     volumes:
       - ./beaker-lab-controller/tftpboot:/var/lib/tftpboot
-#  dnsmasq:
-#    build: ./dnsmasq
-#    volumes:
-#      - ./dnsmasq/beaker.conf:/etc/dnsmasq.d/beaker.conf
+##TODO: set up beaker.conf in Ansible before starting containers
+  dnsmasq:
+    privileged: true
+    build: ./dnsmasq
 volumes:
   mariadb:
