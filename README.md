@@ -3,7 +3,7 @@
 ## requirements
 
 - podman
-- podman-compose
+- ansible
 
 ## log in registry.redhat.io
 
@@ -11,4 +11,4 @@
 
 ## run services
 
-    podman-compose up -d
+    ansible-playbook -v deploy.yml
