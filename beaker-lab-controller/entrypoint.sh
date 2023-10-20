@@ -79,7 +79,6 @@ fi
 
 # We need to use the FQDN of the host running the container
 if [ ! -f "/tmp/lab_controller_registered" ]; then
-  mirror_tasks
   bkr labcontroller-create --fqdn $JUMPHOST \
       --user host/labctrl --password labctrl \
       --email labctrl@beaker-server.localdomain \

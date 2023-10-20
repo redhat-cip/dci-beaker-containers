@@ -7,3 +7,14 @@
     - name: "Setup beaker"
       include_role:
         name: setup_beaker
+
+    - name: Open port in firewall for DNS
+      firewalld:
+        port: "53/udp"
+        permanent: yes
+        immediate: yes
+        state: enabled
+        zone: "{{ item }}"
+      loop:
+        - internal
+        - public

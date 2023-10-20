@@ -47,15 +47,15 @@ spec:
   volumes:
     - name: db-volume
       hostPath:
-        path:  "{{ data_dir }}/mysql"
+        path: "{{ beaker_dir }}/mysql"
         type: Directory
     - name: beaker-data-volume
       hostPath:
-        path:  "{{ data_dir }}/beaker"
+        path: "{{ beaker_dir }}/data"
         type: Directory
     - name: config-volume
       hostPath:
-        path: "{{ data_dir }}/config"
+        path: "{{ beaker_dir }}/config"
         type: Directory
     - name: tftp-volume
       hostPath:

@@ -1,126 +1,22 @@
-- name: Install podman
-  package:
-    name: podman
-    state: present
+- name: Install Packages
+  include_tasks: packages.yml
 
-- name: Open http port, zone internal and public, for firewalld
-  firewalld:
-    port: "{{ item[0] }}/tcp"
-    permanent: yes
-    immediate: yes
-    state: enabled
-    zone: "{{ item[1] }}"
-  loop: "{{ ports | product(['internal', 'public']) | list }}"
+#- name: Configure Netboot
+#  include_tasks: configure_netboot.yml
 
-- name: Create directory to hold files
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ file_owner }}"
-    group: "{{ file_group }}"
-    mode: 0777
-    recurse: yes
-  loop:
-    - "{{ data_dir }}/mysql"
-    - "{{ data_dir }}/beaker"
-    - "{{ data_dir }}/config"
+- name: Configure Pod
+  include_tasks: configure_pod.yml
 
-- name: Setup Beaker pod
-  become: True
-  block:
-    - name: Gather info about specific pods
-      containers.podman.podman_pod_info:
-        name: "{{ beaker_pod_name }}"
-      register: bkr_pod_details
+- name: Configure Beaker
+  include_tasks: configure_beaker.yml
 
-    - name: Remove Beaker Pod
-      containers.podman.podman_pod:
-        name: "{{ beaker_pod_name }}"
-        state: absent
-      when: (bkr_pod_details.pods | length) > 0
+- name: Add Tasks
+  include_tasks: add_tasks.yml
 
-    - name: Process templates
-      template:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        mode: 0644
-        trim_blocks: true
-        lstrip_blocks: true
-      loop:
-        - src: pod.yml.j2
-          dest: "{{ config_file_path }}/pod.yml"
-        - src: configmap.yml.j2
-          dest: "{{ config_file_path }}/configmap.yml"
+- name: Add SUT's
+  include_tasks: add_suts.yml
 
-    - name: Play kube file
-      containers.podman.podman_play:
-        kube_file: "{{ config_file_path }}/pod.yml"
-        configmap: "{{ config_file_path }}/configmap.yml"
-        recreate: true
-        state: created
-
-- name: Setup Beaker service
-  become: true
-  block:
-    - name: Copy the systemd service file
-      copy:
-        content: |
-          [Unit]
-          Description=Podman beaker.service
-          [Service]
-          Restart=no
-          ExecStart=/usr/bin/podman pod start {{ beaker_pod_name }}
-          ExecStop=/usr/bin/podman pod stop -t 10 {{ beaker_pod_name }}
-          KillMode=none
-          Type=forking
-          [Install]
-          WantedBy=default.target
-        dest: "/etc/systemd/system/beaker.service"
-        mode: 0644
-
-    - name: Reload systemd service
-      systemd:
-        daemon_reexec: yes
-        scope: system
-
-    - name: Enable beaker.service
-      systemd:
-        name: beaker
-        enabled: yes
-        scope: system
-
-    - name: Start beaker.service
-      systemd:
-        name: beaker
-        state: started
-        scope: system
-
-    - name: Configure firewall for vm_bridge_zone
-      block:
-      - name: Move bridge to designated firewall zone
-        community.general.nmcli:
-          conn_name: "{{ cluster_name }}-br"
-          state: present
-          zone: "{{ vm_bridge_zone }}"
-        become: true
-
-      - name: Create Iptables NAT chain
-        iptables:
-          table: nat
-          chain: POSTROUTING
-          source: '{{ machine_network_cidr }}'
-          destination: '! {{ machine_network_cidr }}'
-          jump: MASQUERADE
-          protocol: all
-          comment: Ansible NAT Masquerade
-
-      - name: Manage IPv4 forwarding
-        sysctl:
-          name: net.ipv4.ip_forward
-          value: '1'
-          state: present
-          reload: True
-      when:
-        - (SETUP_VM_BRIDGE | default(SETUP_VMS)) | bool
-        - vm_bridge_zone is defined
-
+- name: Add Firewall Ports
+  set_fact:
+    tcp_ports: "{{ tcp_ports| default([]) + [80, 8000] }}"
+    udp_ports: "{{ udp_ports| default([]) + [53, 67, 69] }}"

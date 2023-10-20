@@ -1,14 +1,15 @@
-jumphost: "{{ ansible_fqdn }}"
+jumpbox: "{{ ansible_hostname }}"
+domain: "{{ ansible_domain }}"
+machine_network_ip: "{{ ansible_default_ipv4.address }}"
+beaker_admin_login: admin
+beaker_admin_password: admin
 beaker_server_name: beaker_server
 beaker_lab_name: beaker_lab_controller
 beaker_pod_name: beaker
-data_dir: /opt
-ports:
-  - 80
-  - 8000
-beaker_server_image: quay.io/p3ck/beaker-server:latest
-beaker_lab_image: quay.io/p3ck/beaker-lab-controller:latest
-beaker_mysql_image: registry.redhat.io/rhel8/mariadb-103
+beaker_dir: /opt/beaker
+beaker_server_image: quay.io/distributedci/beaker-server:latest
+beaker_lab_image: quay.io/distributedci/beaker-lab-controller:latest
+beaker_mysql_image: mariadb:10.3
 mysql_database: beaker
 mysql_user: beaker
 mysql_password: beaker
@@ -16,6 +17,5 @@ mysql_root_password: password
 mysql_charset: utf8
 file_owner: "{{ ansible_env.USER }}"
 file_group: "{{ file_owner }}"
-config_file_path: /tmp/wip/config
 dns_servers: []
 beaker_extra_config: {}

@@ -5,6 +5,7 @@ RUN yum upgrade -y && \
 RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
 RUN yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-RedHatEnterpriseLinux.repo && \
   dnf -y copr enable bpeck/beaker && \
+  dnf -y copr enable bpeck/ipmitool && \
   yum -y install beaker-lab-controller && \
   yum -y install beaker-client && \
   yum -y install conserver && \
@@ -21,6 +22,7 @@ COPY config/client.conf /etc/beaker/client.conf.orig
 COPY config/tftp/tftp /etc/xinetd.d/tftp
 COPY files/ipmitool_lanplus /etc/beaker/power-scripts/ipmitool_lanplus
 COPY files/redfish /etc/beaker/power-scripts/redfish
+COPY files/apc_snmp_container /etc/beaker/power-scripts/apc_snmp_container
 
 EXPOSE 69/udp
 
