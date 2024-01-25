@@ -1,10 +1,10 @@
 FROM centos:7
 LABEL name="beaker-server-container"
+COPY files/beaker-server-RedHatEnterpriseLinux.repo /etc/yum.repos.d
 RUN yum upgrade -y && \
   yum -y install epel-release dnf dnf-plugins-core
 RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
-RUN yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-RedHatEnterpriseLinux.repo && \
-  dnf -y copr enable bpeck/beaker && \
+RUN dnf -y copr enable bpeck/beaker && \
   yum -y install beaker-server  && \
   yum -y install beaker-client && \
   yum -y install MySQL-python && \

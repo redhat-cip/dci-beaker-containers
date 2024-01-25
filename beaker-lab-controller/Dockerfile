@@ -3,8 +3,8 @@ LABEL name="beaker-lab-controller-container"
 RUN yum upgrade -y && \
   yum -y install epel-release dnf dnf-plugins-core
 RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
-RUN yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-RedHatEnterpriseLinux.repo && \
-  dnf -y copr enable bpeck/beaker && \
+COPY files/beaker-server-RedHatEnterpriseLinux.repo /etc/yum.repos.d/beaker-server-RedHatEnterpriseLinux.repo
+RUN dnf -y copr enable bpeck/beaker && \
   dnf -y copr enable bpeck/ipmitool && \
   yum -y install beaker-lab-controller && \
   yum -y install beaker-client && \
@@ -14,6 +14,7 @@ RUN yum-config-manager --add-repo https://beaker-project.org/yum/beaker-server-R
   yum -y install tftp-server && \
   yum -y install tftp && \
   yum -y install xinetd && \
+  yum -y install fence-agents-lpar && \
   yum clean all && \
   mkdir -p /defaults /config
 COPY config/supervisord.conf /etc/supervisord.conf
