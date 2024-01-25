@@ -2,13 +2,12 @@
 
 ## requirements
 
-- https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-- podman
-- ansible
-- ansible-collection-community-general
-- ansible-collection-containers-podman
-- ansible-collection-ansible-posix
-- python3-netaddr.noarch
+subscription-manager repos --enable ansible-2.9-for-rhel-8-x86_64-rpms
+
+dnf -y install ansible-2.9.\* dnf-command\(versionlock\)
+dnf versionlock ansible
+
+ansible-galaxy collection install -r requirements.yml
 
 ## run services
 
