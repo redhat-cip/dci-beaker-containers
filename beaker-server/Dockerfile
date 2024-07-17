@@ -1,6 +1,8 @@
 FROM centos:7
 LABEL name="beaker-server-container"
 COPY files/beaker-server-RedHatEnterpriseLinux.repo /etc/yum.repos.d
+# `mirrorlist.centos.org` no longer exists. Use `vault.centos.org`
+COPY files/centos-7-vault.repo /etc/yum.repos.d/CentOS-Base.repo
 RUN yum upgrade -y && \
   yum -y install epel-release dnf dnf-plugins-core
 RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
