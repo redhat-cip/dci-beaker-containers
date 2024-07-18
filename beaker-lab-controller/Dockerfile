@@ -4,6 +4,8 @@ RUN yum upgrade -y && \
   yum -y install epel-release dnf dnf-plugins-core
 RUN yum-config-manager --save --setopt=epel.exclude=nodejs*,npm
 COPY files/beaker-server-RedHatEnterpriseLinux.repo /etc/yum.repos.d/beaker-server-RedHatEnterpriseLinux.repo
+# `mirrorlist.centos.org` no longer exists. Use `vault.centos.org`
+COPY files/centos-7-vault.repo /etc/yum.repos.d/CentOS-Base.repo
 RUN dnf -y copr enable bpeck/beaker && \
   dnf -y copr enable bpeck/ipmitool && \
   yum -y install beaker-lab-controller && \
