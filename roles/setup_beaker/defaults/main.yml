@@ -9,7 +9,7 @@ beaker_pod_name: beaker
 beaker_dir: /opt/beaker
 beaker_server_image: quay.io/distributedci/beaker-server:latest
 beaker_lab_image: quay.io/distributedci/beaker-lab-controller:latest
-beaker_mysql_image: mariadb:10.3
+beaker_mysql_image: docker.io/mariadb:10.3
 mysql_database: beaker
 mysql_user: beaker
 mysql_password: beaker
